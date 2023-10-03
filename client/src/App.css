@@ -5,7 +5,7 @@
   --BGColor2: #353739;
   --Grey1: #575757;
   --Grey2: #6c6c6c;
-  --Grey3: #787878;
+  --Grey3: #2b2b2b;
   --Grey4: #959595;
   --Grey5: #9c9c9c;
   --ButtonBlue: #9fc0ca;
@@ -127,6 +127,7 @@ circle {
   border-radius: 24px;
   color: var(--Grey3);
   font-size: 3rem;
+  font-weight: 500;
   height: 80px;
   padding: 1rem;
   width: 400px;
@@ -145,4 +146,23 @@ circle {
 
 #enterButton:hover {
   background-color: #4681da;
+}
+
+@media (width < 750px) {
+  #enterH1 {
+    font-size: 2rem;
+    margin: 8.5rem 0;
+  }
+  #enterInput,
+  #enterButton {
+    width: 279px;
+    height: 56px;
+    font-size: 1.5rem;
+  }
+  #enterButton {
+    line-height: 3.5rem;
+  }
+  #enterForm {
+    gap: 1rem;
+  }
 }
