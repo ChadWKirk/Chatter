@@ -14,3 +14,135 @@
   --ColorPickerGreen: #00ff55;
   --Font: "Open Sans", sans-serif;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--Font);
+}
+
+a {
+  text-decoration: none;
+}
+
+input:focus {
+  outline: none;
+}
+
+#enterContainer {
+  background-color: var(--BGColor1);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+rect {
+  width: 230px;
+  height: 102px;
+  background-color: var(--Grey1);
+  position: absolute;
+  z-index: 1;
+}
+
+#rect1 {
+  left: 250px;
+  transform: rotate(15deg);
+  animation: shapeMoveUpnDown 25s infinite ease-in-out;
+}
+
+#rect2 {
+  right: 250px;
+  transform: rotate(15deg);
+  animation: shapeMoveUpnDownReverse 25s infinite ease-in-out;
+}
+
+@keyframes shapeMoveUpnDown {
+  0% {
+    top: 200px;
+  }
+  50% {
+    top: 600px;
+  }
+  100% {
+    top: 200px;
+  }
+}
+
+@keyframes shapeMoveUpnDownReverse {
+  0% {
+    top: 600px;
+  }
+  50% {
+    top: 200px;
+  }
+  100% {
+    top: 600px;
+  }
+}
+
+circle {
+  width: 173px;
+  height: 173px;
+  border-radius: 50%;
+  background-color: var(--Grey1);
+  position: absolute;
+  z-index: 1;
+  animation: circleMoveUpnDown 15s infinite ease-in;
+}
+
+@keyframes circleMoveUpnDown {
+  0% {
+    top: 400px;
+  }
+  50% {
+    top: 600px;
+  }
+  100% {
+    top: 400px;
+  }
+}
+
+#enterH1 {
+  color: #fff;
+  font-size: 6rem;
+  line-height: 6rem;
+  margin: 9rem 0rem;
+  font-weight: bold;
+  position: static;
+  z-index: 2;
+}
+
+#enterForm {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  position: static;
+  z-index: 1;
+}
+
+#enterInput {
+  background-color: #d9d9d9;
+  border-radius: 24px;
+  color: var(--Grey3);
+  font-size: 3rem;
+  height: 80px;
+  padding: 1rem;
+  width: 400px;
+}
+
+#enterButton {
+  background-color: #4d8deeda;
+  border-radius: 33px;
+  color: #fff;
+  font-size: 3rem;
+  line-height: 5rem;
+  height: 80px;
+  text-align: center;
+  width: 400px;
+}
+
+#enterButton:hover {
+  background-color: #4681da;
+}
