@@ -1,10 +1,21 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Normalize.css";
 import "./App.css";
 import ChatItemList from "./Components/ChatItemList";
 
 function App() {
+  //chat room page functions
+  const [msgValue, setMsgValue] = useState("");
+  const [onlineNowCount, setOnlineNowCount] = useState("12");
+  useEffect(() => {
+    //fetch amount of people online
+    //setOnlineCount(fetchedOnlineNowCount) //isn't going to work because of loop but whatever
+  }, [onlineNowCount]);
+  async function submitMessage(e) {
+    e.preventDefault();
+    //take input value and send it to server to save into database
+  }
   return (
     // <div id="enterContainer">
     //   <rect id="rect1"></rect>
@@ -30,14 +41,17 @@ function App() {
         </div>
 
         <div>
-          <form>
-            <input placeholder="Type Message Here"></input>
-            <button>Send</button>
+          <form onSubmit={(e) => submitMessage(e)}>
+            <input
+              placeholder="Type Message Here"
+              onChange={(e) => setMsgValue(e.target.value)}
+            ></input>
+            <button type="submit">Send</button>
           </form>
         </div>
       </div>
       <div id="chatRoom--OnlineContainer">
-        <h2>Online Now - 12</h2>
+        <h2>Online Now - {onlineNowCount}</h2>
         <div id="chatRoom--OnlineNowListContainer">
           <div id="chatRoom--OnlineNowItem">ImSoBeast</div>
         </div>
