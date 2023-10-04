@@ -1,6 +1,8 @@
+import React from "react";
 import { useState } from "react";
 import "./Normalize.css";
 import "./App.css";
+import ChatItemList from "./Components/ChatItemList";
 
 function App() {
   return (
@@ -23,15 +25,10 @@ function App() {
           <h1>Chatter</h1>
           <div>ColorPicker</div>
         </div>
-        <div id="chatRoom--ChatItemList">
-          <div id="chatRoom--ChatItem">
-            <div id="chatRoom--ChatItemNameAndTime">
-              <p id="chatRoom--ChatItemName">ImSoBeast</p>
-              <p id="chatRoom--ChatItemTime">Today at 12:30AM</p>
-            </div>
-            <div id="chatRoom--ChatItemText">HELLO WORLD!</div>
-          </div>
+        <div>
+          <ChatItemList />
         </div>
+
         <div>
           <form>
             <input placeholder="Type Message Here"></input>
