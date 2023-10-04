@@ -36,6 +36,8 @@ input:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: hidden;
+  position: relative;
 }
 
 rect {
@@ -47,13 +49,13 @@ rect {
 }
 
 #rect1 {
-  left: 250px;
+  left: 5vw;
   transform: rotate(15deg);
   animation: shapeMoveUpnDown 25s infinite ease-in-out;
 }
 
 #rect2 {
-  right: 250px;
+  right: 5vw;
   transform: rotate(15deg);
   animation: shapeMoveUpnDownReverse 25s infinite ease-in-out;
 }
@@ -94,23 +96,28 @@ circle {
 
 @keyframes circleMoveUpnDown {
   0% {
-    top: 400px;
+    top: 90vh;
   }
   50% {
-    top: 600px;
+    top: 65vh;
   }
   100% {
-    top: 400px;
+    top: 90vh;
   }
 }
 
 #enterH1 {
   color: #fff;
   font-size: 6rem;
-  line-height: 6rem;
-  margin: 9rem 0rem;
+  min-height: 33vh;
+  /* line-height: 6rem; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 4rem;
+  /* margin: 9rem 0rem; */
   font-weight: bold;
-  position: static;
+  /* position: static; */
   z-index: 2;
 }
 
@@ -118,7 +125,7 @@ circle {
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  position: static;
+  /* position: static; */
   z-index: 1;
 }
 
