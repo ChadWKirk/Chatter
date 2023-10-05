@@ -5,6 +5,17 @@ import "./App.css";
 import ChatItemList from "./Components/ChatItemList";
 
 function App() {
+  //test app page functions
+  useEffect(() => {
+    async function testFetch() {
+      await fetch("/api", {
+        method: "GET",
+        headers: { "Content-type": "application/json" },
+      }).then((response) => console.log(response));
+    }
+
+    testFetch();
+  }, []);
   //chat room page functions
   const [msgValue, setMsgValue] = useState("");
   const [onlineNowCount, setOnlineNowCount] = useState("12");
