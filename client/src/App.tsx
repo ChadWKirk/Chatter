@@ -8,7 +8,7 @@ function App() {
   //test app page functions
   useEffect(() => {
     async function testFetch() {
-      await fetch("/api", {
+      await fetch("http://localhost:5000", {
         method: "GET",
         headers: { "Content-type": "application/json" },
       }).then((response) => console.log(response));
