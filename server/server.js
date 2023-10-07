@@ -12,11 +12,11 @@ require("dotenv").config({ path: "./config.env" });
 const cors = require("cors");
 const mysql = require("mysql");
 const db = mysql.createConnection({
-  host: "the-void.cluster-coxkoizjkqbn.us-east-2.rds.amazonaws.com",
+  host: "chatter.czzxstwgf0a4.us-east-1.rds.amazonaws.com",
   port: "3306",
   user: process.env.AWS_USER,
   password: process.env.AWS_PASSWORD,
-  database: "thevoid",
+  database: "chatter",
 });
 
 db.connect((err) => {
@@ -48,3 +48,7 @@ app.get("/", (req, res) => {
 //online now section pulls names from db
 //if user goes to /badtoken/name or just /name it will redirect to home page
 //if user exits /token/name, user gets erased from db and removed from online now in chatroom page
+
+//db schemas
+//user = id, name, color
+//message = id, message, dateSent
