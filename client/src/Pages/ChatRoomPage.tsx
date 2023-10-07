@@ -48,6 +48,7 @@ function ChatRoomPage() {
 
   //pull list of users from database
   //runs any time a user is added or removed from databae (online/offline)
+  const [onlineNowList, setOnlineNowList] = useState([]);
   useEffect(() => {
     async function checkOnlineUsers() {
       await fetch("http://localhost:5000/checkOnlineUsers", {
@@ -63,6 +64,13 @@ function ChatRoomPage() {
             //if name and id don't match to an existing user in database
             console.log(parsedJSON);
             setOnlineNowCount(parsedJSON.length);
+            let onlineNowListArr = [];
+            for (let i = 0; i < parsedJSON.length; i++) {
+              onlineNowListArr.push(
+                <div id="chatRoom--OnlineNowItem">{parsedJSON[i].name}</div>
+              );
+            }
+            setOnlineNowList(onlineNowListArr);
           })
       );
     }
@@ -148,9 +156,7 @@ function ChatRoomPage() {
       </div>
       <div id="chatRoom--OnlineContainer">
         <h2>Online Now - {onlineNowCount}</h2>
-        <div id="chatRoom--OnlineNowListContainer">
-          <div id="chatRoom--OnlineNowItem">ImSoBeast</div>
-        </div>
+        <div id="chatRoom--OnlineNowListContainer">{onlineNowList}</div>
       </div>
     </div>
   );
