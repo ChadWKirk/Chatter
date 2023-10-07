@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 //socket.io
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:5000");
+//components
+import ChatItemList from "../Components/ChatItemList";
 
 function ChatRoomPage() {
   let { id } = useParams();
@@ -41,6 +43,32 @@ function ChatRoomPage() {
       checkUserInUrl();
     }
   }, []);
+
+  const [onlineNowCount, setOnlineNowCount] = useState("");
+
+  //pull list of users from database
+  //runs any time a user is added or removed from databae (online/offline)
+  useEffect(() => {
+    async function checkOnlineUsers() {
+      await fetch("http://localhost:5000/checkOnlineUsers", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ id: `${id}`, name: `${name}` }),
+      }).then((response) =>
+        response
+          .json()
+          .then((resJSON) => JSON.stringify(resJSON))
+          .then((stringJSON) => JSON.parse(stringJSON))
+          .then((parsedJSON) => {
+            //if name and id don't match to an existing user in database
+            console.log(parsedJSON);
+            setOnlineNowCount(parsedJSON.length);
+          })
+      );
+    }
+    checkOnlineUsers();
+  }, []);
+
   //create message from input field
   const [message, setMessage] = useState();
   //put message that is received in a div element
@@ -60,41 +88,41 @@ function ChatRoomPage() {
   }
   const [socketState, setSocketState] = useState(true);
   //when socket gets a "receive_message" from express, show the message to everyone by pushing it to messageQue
-  useEffect(() => {
-    console.log("sending msg");
-    socket.on("receive_message", (data) => {
-      setMessageQue((messageQue) => [
-        ...messageQue,
-        <div id="messageReceived">
-          {data.name}:{" "}
-          <p style={{ fontWeight: "400", display: "inline" }}>{data.message}</p>
-        </div>,
-      ]);
-    });
-  }, [socketState]);
+  // useEffect(() => {
+  //   console.log("sending msg");
+  //   socket.on("receive_message", (data) => {
+  //     setMessageQue((messageQue) => [
+  //       ...messageQue,
+  //       <div id="messageReceived">
+  //         {data.name}:{" "}
+  //         <p style={{ fontWeight: "400", display: "inline" }}>{data.message}</p>
+  //       </div>,
+  //     ]);
+  //   });
+  // }, [socketState]);
   //set up what message to show
   //the message that is displayed in the DOM
   const [showMsg, setShowMsg] = useState();
-  useEffect(() => {
-    console.log(messageQue.length, " length");
-    console.log(messageQue, " que");
-    //when messageQue is changed, show the first entry in messageQue array
-    setShowMsg(messageQue[0]);
-    //if messageQue.length > 0, every x seconds chop off first entry and show new first entry
-    if (messageQue.length > 0) {
-      setTimeout(() => {
-        let messageQueCopy = messageQue;
-        //cut off first 2 because for some reason it is adding the same thing twice when a user sends a message
-        messageQueCopy.shift();
-        messageQueCopy.shift();
-        setMessageQue(messageQueCopy);
-        setShowMsg(messageQue[0]);
-        console.log(messageQue.length, " length");
-        console.log(messageQue, " que");
-        //need to make sure timer time is the same as css animation time for fade in/out
-      }, 4000);
-    }
-  }, [messageQue]);
+  // useEffect(() => {
+  //   console.log(messageQue.length, " length");
+  //   console.log(messageQue, " que");
+  //   //when messageQue is changed, show the first entry in messageQue array
+  //   setShowMsg(messageQue[0]);
+  //   //if messageQue.length > 0, every x seconds chop off first entry and show new first entry
+  //   if (messageQue.length > 0) {
+  //     setTimeout(() => {
+  //       let messageQueCopy = messageQue;
+  //       //cut off first 2 because for some reason it is adding the same thing twice when a user sends a message
+  //       messageQueCopy.shift();
+  //       messageQueCopy.shift();
+  //       setMessageQue(messageQueCopy);
+  //       setShowMsg(messageQue[0]);
+  //       console.log(messageQue.length, " length");
+  //       console.log(messageQue, " que");
+  //       //need to make sure timer time is the same as css animation time for fade in/out
+  //     }, 4000);
+  //   }
+  // }, [messageQue]);
 
   return (
     <div id="chatRoom--PageContainer">
