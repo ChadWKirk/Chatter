@@ -14,8 +14,13 @@ INSERT INTO Users (name, color) VALUES ('Chad', 'White');
 -- @block
 CREATE TABLE Messages (
     id int primary key auto_increment,
-    message varchar(0),
+    sender varchar(16),
+    message varchar(255),
     dateSent DATETIME 
-)
+);
 
+-- @block
+INSERT INTO Messages (sender, message) VALUES ('Chad', 'Sup');
+
+-- @block
 select * from Messages;

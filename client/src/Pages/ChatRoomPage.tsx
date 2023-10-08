@@ -67,7 +67,9 @@ function ChatRoomPage() {
             let onlineNowListArr = [];
             for (let i = 0; i < parsedJSON.length; i++) {
               onlineNowListArr.push(
-                <div id="chatRoom--OnlineNowItem">{parsedJSON[i].name}</div>
+                <div id="chatRoom--OnlineNowItem" key={i}>
+                  {parsedJSON[i].name}
+                </div>
               );
             }
             setOnlineNowList(onlineNowListArr);
@@ -82,12 +84,26 @@ function ChatRoomPage() {
   //put message that is received in a div element
   const [messageReceived, setMessageReceived] = useState(<div></div>);
   //happens when form is submitted
-  function sendMessage(e) {
+  //update page with socket
+  async function sendMessage(e) {
     console.log("sendMessage activated");
-    //add new message to db
-    //add new message to ChatItemList
-    //update page with socket
     e.preventDefault();
+    //get date of sent message
+    const date = new Date();
+    //add new message to db
+    await fetch("http://localhost:5000/sendMessage", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({
+        message: `${message}`,
+        // date: `${date}`,
+        name: `${name}`,
+      }),
+    }).then((response) => {
+      console.log(response);
+    });
+    //add new message to ChatItemList
+    //chatitemlist gets updated from within the component since state changes
     //clear input field when message gets submitted
     socket.emit("send_message", { name: name, message: message });
     document.getElementById("msgInput").value = "";

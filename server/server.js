@@ -63,7 +63,6 @@ app.post("/checkOnlineUsers", (req, res) => {
   db.query(sql, function (err, result) {
     if (err) console.log(err);
     res.send(result);
-    console.log(result);
   });
 });
 
@@ -73,6 +72,27 @@ app.post("/checkUser", (req, res) => {
   db.query(sql, function (err, result) {
     if (err) console.log(err);
     res.send(result);
+  });
+});
+
+//add message into messages table
+app.post("/sendMessage", (req, res) => {
+  var sql = `INSERT INTO Messages (sender, message) VALUES ('${req.body.name}', '${req.body.message}')`;
+  db.query(sql, function (err, result) {
+    if (err) console.log(err);
+    res.send(result);
+    console.log(result);
+  });
+  console.log(req.body.date);
+});
+
+//fetch messages from messages table
+app.get("/fetchMessages", (req, res) => {
+  var sql = `SELECT * FROM Messages`;
+  db.query(sql, function (err, result) {
+    if (err) console.log(err);
+    res.send(result);
+    // console.log(result);
   });
 });
 
