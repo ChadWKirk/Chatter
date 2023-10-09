@@ -1,11 +1,10 @@
 const express = require("express");
 const app = express();
-const PORT = 5000;
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] },
+  cors: { origin: "http://127.0.0.1:5173", methods: ["GET", "POST"] },
 });
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
@@ -20,8 +19,15 @@ const db = mysql.createConnection({
   database: "chatterInstance",
 });
 
-app.listen(PORT, () => {
-  console.log(`Server connected on ${PORT}`);
+server.listen(port, () => console.log(`Listening on port ${port}`));
+
+io.on("connection", (socket) => {
+  console.log(`user connected: ${socket.id}`);
+
+  socket.on("send_message", (data) => {
+    console.log("sending message", data);
+    socket.broadcast.emit("receive_message", data);
+  });
 });
 
 db.connect((err) => {
@@ -83,7 +89,7 @@ app.post("/sendMessage", (req, res) => {
     res.send(result);
     console.log(result);
   });
-  console.log(req.body.date);
+  // console.log(req.body.date);
 });
 
 //fetch messages from messages table

@@ -24,3 +24,6 @@ INSERT INTO Messages (sender, message) VALUES ('Chad', 'Sup');
 
 -- @block
 select * from Messages;
+
+-- @block
+DROP TABLE Messages;

@@ -6,6 +6,7 @@ import io from "socket.io-client";
 const socket = io.connect("http://localhost:5000");
 //components
 import ChatItemList from "../Components/ChatItemList";
+import ChatItem from "../Components/ChatItem";
 
 function ChatRoomPage() {
   let { id } = useParams();
@@ -77,6 +78,32 @@ function ChatRoomPage() {
       );
     }
     checkOnlineUsers();
+    let chatItemListArr = [];
+    async function fetchMessages() {
+      await fetch("http://localhost:5000/fetchMessages", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }).then((response) =>
+        response
+          .json()
+          .then((resJSON) => JSON.stringify(resJSON))
+          .then((stringJSON) => JSON.parse(stringJSON))
+          .then((parsedJSON) => {
+            console.log(parsedJSON);
+            //add messages to chatItemList
+            for (let i = 0; i < parsedJSON.length; i++) {
+              chatItemListArr.push({
+                id: i,
+                message: parsedJSON[i].message,
+                name: parsedJSON[i].sender,
+                date: parsedJSON[i].dateSent,
+              });
+            }
+            setMessageList(chatItemListArr);
+          })
+      );
+    }
+    fetchMessages();
   }, []);
 
   //create message from input field
@@ -102,8 +129,7 @@ function ChatRoomPage() {
     }).then((response) => {
       console.log(response);
     });
-    //add new message to ChatItemList
-    //chatitemlist gets updated from within the component since state changes
+
     //clear input field when message gets submitted
     socket.emit("send_message", { name: name, message: message });
     document.getElementById("msgInput").value = "";
@@ -111,42 +137,26 @@ function ChatRoomPage() {
     setSocketState(!socketState);
   }
   const [socketState, setSocketState] = useState(true);
+  const [messageList, setMessageList] = useState([]);
+
+  //add new message to ChatItemList
   //when socket gets a "receive_message" from express, show the message to everyone by pushing it to messageQue
-  // useEffect(() => {
-  //   console.log("sending msg");
-  //   socket.on("receive_message", (data) => {
-  //     setMessageQue((messageQue) => [
-  //       ...messageQue,
-  //       <div id="messageReceived">
-  //         {data.name}:{" "}
-  //         <p style={{ fontWeight: "400", display: "inline" }}>{data.message}</p>
-  //       </div>,
-  //     ]);
-  //   });
-  // }, [socketState]);
-  //set up what message to show
-  //the message that is displayed in the DOM
+  useEffect(() => {
+    console.log("sending msg");
+    console.log(messageList);
+    let messageListArr = messageList;
+    socket.on("receive_message", (data) => {
+      messageListArr.push({
+        id: messageList.length + 1,
+        message: data.message,
+        name: data.name,
+        // date: parsedJSON[i].dateSent,
+      });
+      setMessageList(messageListArr);
+    });
+  }, [socketState]);
+  
   const [showMsg, setShowMsg] = useState();
-  // useEffect(() => {
-  //   console.log(messageQue.length, " length");
-  //   console.log(messageQue, " que");
-  //   //when messageQue is changed, show the first entry in messageQue array
-  //   setShowMsg(messageQue[0]);
-  //   //if messageQue.length > 0, every x seconds chop off first entry and show new first entry
-  //   if (messageQue.length > 0) {
-  //     setTimeout(() => {
-  //       let messageQueCopy = messageQue;
-  //       //cut off first 2 because for some reason it is adding the same thing twice when a user sends a message
-  //       messageQueCopy.shift();
-  //       messageQueCopy.shift();
-  //       setMessageQue(messageQueCopy);
-  //       setShowMsg(messageQue[0]);
-  //       console.log(messageQue.length, " length");
-  //       console.log(messageQue, " que");
-  //       //need to make sure timer time is the same as css animation time for fade in/out
-  //     }, 4000);
-  //   }
-  // }, [messageQue]);
 
   return (
     <div id="chatRoom--PageContainer">
@@ -155,8 +165,15 @@ function ChatRoomPage() {
           <h1>Chatter</h1>
           <div>ColorPicker</div>
         </div>
-        <div>
-          <ChatItemList />
+        <div id="chatRoom--ChatItemList">
+          {messageList.map((message) => (
+            <ChatItem
+              Sender={message.name}
+              // Time={parsedJSON[i].dateSent}
+              Message={message.message}
+              key={message.id}
+            />
+          ))}
         </div>
 
         <div>
