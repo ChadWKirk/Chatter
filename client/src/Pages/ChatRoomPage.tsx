@@ -133,14 +133,14 @@ function ChatRoomPage() {
     //clear input field when message gets submitted
     socket.emit("send_message", { name: name, message: message });
     document.getElementById("msgInput").value = "";
-    //flip socket state just to get useEffect to fire
+    //flip socket state just to get useEffect to fire (below)
     setSocketState(!socketState);
   }
   const [socketState, setSocketState] = useState(true);
   const [messageList, setMessageList] = useState([]);
 
   //add new message to ChatItemList
-  //when socket gets a "receive_message" from express, show the message to everyone by pushing it to messageQue
+  //when socket gets a "receive_message" from express, show the message to everyone by pushing it to messageList
   useEffect(() => {
     console.log("sending msg");
     console.log(messageList);
@@ -155,8 +155,6 @@ function ChatRoomPage() {
       setMessageList(messageListArr);
     });
   }, [socketState]);
-  
-  const [showMsg, setShowMsg] = useState();
 
   return (
     <div id="chatRoom--PageContainer">
