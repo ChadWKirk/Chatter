@@ -2,8 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //socket.io
-import io from "socket.io-client";
-const socket = io.connect("http://localhost:5000");
+import { socket } from "../socket";
 //components
 import ChatItemList from "../Components/ChatItemList";
 import ChatItem from "../Components/ChatItem";
@@ -11,6 +10,25 @@ import ChatItem from "../Components/ChatItem";
 function ChatRoomPage() {
   let { id } = useParams();
   let { name } = useParams();
+  const [messageList, setMessageList] = useState([]);
+  //when window closes, remove user from db
+  window.addEventListener("unload", (ev) => {
+    ev.preventDefault();
+    socket.emit("close", { id: id });
+  });
+  //check online users from socket when user is added or removed
+  socket.on("show_users", (users) => {
+    setOnlineNowCount(users.length);
+    let onlineNowListArr = [];
+    for (let i = 0; i < users.length; i++) {
+      onlineNowListArr.push(
+        <div id="chatRoom--OnlineNowItem" key={i}>
+          {users[i].name}
+        </div>
+      );
+    }
+    setOnlineNowList(onlineNowListArr);
+  });
   useEffect(() => {
     //if id in url is not a number, redirect to home page
     if (isNaN(id)) {
@@ -18,7 +36,7 @@ function ChatRoomPage() {
     }
     //if id and user are tied together, open chat room. if not, redirect to home
     async function checkUserInUrl() {
-      await fetch("/api/checkUser", {
+      await fetch("http://localhost:5000/checkUser", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ id: `${id}`, name: `${name}` }),
@@ -43,9 +61,12 @@ function ChatRoomPage() {
     if (!isNaN(id)) {
       checkUserInUrl();
     }
+
+    console.log(messageList, " from empty useeffect");
   }, []);
 
   const [onlineNowCount, setOnlineNowCount] = useState("");
+  const [socketState, setSocketState] = useState(true);
 
   //pull list of users from database
   //runs any time a user is added or removed from databae (online/offline)
@@ -63,7 +84,7 @@ function ChatRoomPage() {
           .then((stringJSON) => JSON.parse(stringJSON))
           .then((parsedJSON) => {
             //if name and id don't match to an existing user in database
-            console.log(parsedJSON);
+            console.log(parsedJSON, " online users");
             setOnlineNowCount(parsedJSON.length);
             let onlineNowListArr = [];
             for (let i = 0; i < parsedJSON.length; i++) {
@@ -89,7 +110,7 @@ function ChatRoomPage() {
           .then((resJSON) => JSON.stringify(resJSON))
           .then((stringJSON) => JSON.parse(stringJSON))
           .then((parsedJSON) => {
-            console.log(parsedJSON);
+            console.log(parsedJSON, " from fetch messages parsedJSON");
             //add messages to chatItemList
             for (let i = 0; i < parsedJSON.length; i++) {
               chatItemListArr.push({
@@ -104,6 +125,7 @@ function ChatRoomPage() {
       );
     }
     fetchMessages();
+    console.log(messageList, " from fetchMessages()");
   }, []);
 
   //create message from input field
@@ -127,33 +149,35 @@ function ChatRoomPage() {
         name: `${name}`,
       }),
     }).then((response) => {
-      console.log(response);
+      socket.emit("send_message", { name: name, message: message });
     });
 
     //clear input field when message gets submitted
-    socket.emit("send_message", { name: name, message: message });
+
     document.getElementById("msgInput").value = "";
     //flip socket state just to get useEffect to fire (below)
-    setSocketState(!socketState);
+    // setSocketState(!socketState);
   }
-  const [socketState, setSocketState] = useState(true);
-  const [messageList, setMessageList] = useState([]);
 
   //add new message to ChatItemList
   //when socket gets a "receive_message" from express, show the message to everyone by pushing it to messageList
   useEffect(() => {
     console.log("sending msg");
-    console.log(messageList);
-    let messageListArr = messageList;
+    console.log(messageList + " from socket state useeffect");
     socket.on("receive_message", (data) => {
-      messageListArr.push({
+      console.log("socket on");
+      const newMsg = {
         id: messageList.length + 1,
         message: data.message,
         name: data.name,
         // date: parsedJSON[i].dateSent,
-      });
-      setMessageList(messageListArr);
+      };
+      setMessageList((messageList) => [...messageList, newMsg]);
     });
+    return function cleanup() {
+      socket.removeListener("receive_message");
+    };
+    // return () => socket.disconnect();
   }, [socketState]);
 
   return (
@@ -164,14 +188,7 @@ function ChatRoomPage() {
           <div>ColorPicker</div>
         </div>
         <div id="chatRoom--ChatItemList">
-          {messageList.map((message) => (
-            <ChatItem
-              Sender={message.name}
-              // Time={parsedJSON[i].dateSent}
-              Message={message.message}
-              key={message.id}
-            />
-          ))}
+          <ChatItemList messageList={messageList} />
         </div>
 
         <div>

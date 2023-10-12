@@ -6,6 +6,9 @@ CREATE TABLE Users (
 );
 
 -- @block
+DROP TABLE Users;
+
+-- @block
 Select * from Users;
 
 -- @block

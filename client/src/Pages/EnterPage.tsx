@@ -1,8 +1,12 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+//socket.io
+import { socket } from "../socket";
 
 const EnterPage = () => {
   const [name, setName] = useState();
+  let navigate = useNavigate();
 
   async function enterChatServer(e) {
     e.preventDefault();
@@ -18,9 +22,10 @@ const EnterPage = () => {
         .then((stringJSON) => JSON.parse(stringJSON))
         .then((parsedJSON) => {
           console.log(parsedJSON);
-          window.location.assign(`/${parsedJSON.insertId}/${name}`);
+          navigate(`/${parsedJSON.insertId}/${name}`);
         })
     );
+    socket.emit("check_users", "null");
   }
   return (
     <div id="enterContainer">

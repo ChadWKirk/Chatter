@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const http = require("http");
-const { Server } = require("socket.io");
 const server = http.createServer(app);
+const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: { origin: "http://127.0.0.1:5173", methods: ["GET", "POST"] },
 });
@@ -18,17 +18,38 @@ const db = mysql.createConnection({
   password: process.env.AWS_PASSWORD,
   database: "chatterInstance",
 });
-
-server.listen(port, () => console.log(`Listening on port ${port}`));
-
 io.on("connection", (socket) => {
   console.log(`user connected: ${socket.id}`);
 
   socket.on("send_message", (data) => {
     console.log("sending message", data);
-    socket.broadcast.emit("receive_message", data);
+    io.emit("receive_message", data);
+  });
+
+  socket.on("check_users", (data) => {
+    var sql = `SELECT * FROM Users`;
+    db.query(sql, function (err, result) {
+      if (err) console.log(err);
+      console.log(result, " USERS");
+      io.emit("show_users", result);
+    });
+  });
+
+  socket.on("close", (data) => {
+    var sql = `DELETE FROM Users WHERE id='${data.id}'`;
+    db.query(sql, function (err, result) {
+      if (err) console.log(err);
+      console.log(`1 record deleted with id of ${data.id}`);
+    });
+    var sql2 = `SELECT * FROM Users`;
+    db.query(sql2, function (err, result) {
+      if (err) console.log(err);
+      console.log(result, " USERS");
+      io.emit("show_users", result);
+    });
   });
 });
+server.listen(port, () => console.log(`Listening on port ${port}`));
 
 db.connect((err) => {
   if (err) {
@@ -87,7 +108,7 @@ app.post("/sendMessage", (req, res) => {
   db.query(sql, function (err, result) {
     if (err) console.log(err);
     res.send(result);
-    console.log(result);
+    // console.log(result);
   });
   // console.log(req.body.date);
 });
