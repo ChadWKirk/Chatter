@@ -104,13 +104,12 @@ app.post("/checkUser", (req, res) => {
 
 //add message into messages table
 app.post("/sendMessage", (req, res) => {
-  var sql = `INSERT INTO Messages (sender, message) VALUES ('${req.body.name}', '${req.body.message}')`;
+  var sql = `INSERT INTO Messages (sender, message, date) VALUES ('${req.body.name}', '${req.body.message}', '${req.body.date}')`;
   db.query(sql, function (err, result) {
     if (err) console.log(err);
     res.send(result);
-    // console.log(result);
+    console.log(sql);
   });
-  // console.log(req.body.date);
 });
 
 //fetch messages from messages table

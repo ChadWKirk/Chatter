@@ -8,7 +8,7 @@ function ChatItemList({ messageList }) {
       {messageList.map((message) => (
         <ChatItem
           Sender={message.name}
-          // Time={parsedJSON[i].dateSent}
+          Date={message.date}
           Message={message.message}
           key={message.id}
         />

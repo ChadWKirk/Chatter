@@ -19,11 +19,8 @@ CREATE TABLE Messages (
     id int primary key auto_increment,
     sender varchar(16),
     message varchar(255),
-    dateSent DATETIME 
+    date varchar(255) 
 );
-
--- @block
-INSERT INTO Messages (sender, message) VALUES ('Chad', 'Sup');
 
 -- @block
 select * from Messages;

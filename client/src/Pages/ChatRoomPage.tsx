@@ -8,6 +8,16 @@ import ChatItemList from "../Components/ChatItemList";
 import ChatItem from "../Components/ChatItem";
 
 function ChatRoomPage() {
+  //NOTES
+  //How to deal with time zones for chat app:
+
+  // When user joins room, get current date and time for user
+
+  // translate military time to normal time and get AM if under 12 and PM if 12 or over hours
+
+  // if a message's date is not that same day, change "Today at" to "mm/dd/yyyy"
+
+  
   let { id } = useParams();
   let { name } = useParams();
   const [messageList, setMessageList] = useState([]);
@@ -145,11 +155,11 @@ function ChatRoomPage() {
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({
         message: `${message}`,
-        // date: `${date}`,
         name: `${name}`,
+        date: `${date}`,
       }),
     }).then((response) => {
-      socket.emit("send_message", { name: name, message: message });
+      socket.emit("send_message", { name: name, message: message, date: date });
     });
 
     //clear input field when message gets submitted
@@ -170,7 +180,7 @@ function ChatRoomPage() {
         id: messageList.length + 1,
         message: data.message,
         name: data.name,
-        // date: parsedJSON[i].dateSent,
+        date: data.date,
       };
       setMessageList((messageList) => [...messageList, newMsg]);
     });
